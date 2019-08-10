@@ -1,0 +1,94 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <!-- Tell the browser to be responsive to screen width -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content=" Sistemas de gestion de clientes">
+    <meta name="author" content="Juan Carlos Hernandez Reyes">
+    <!-- Favicon icon -->
+    <link rel="icon" type="image/png" sizes="32x32" href="{% static 'images/favicon.png' %}">
+    <title>Activación de Cuenta | Tickets BIDSS Technology</title>
+    <!-- Bootstrap Core CSS -->
+    <link href="{% static 'plugins/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+    <!-- page css -->
+    <link href="{% static 'css/pages/login-register-lock.css' %}" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link href="{% static 'css/style.css' %}" rel="stylesheet">
+    <link href="{% static 'css/myStyle.css' %}" rel="stylesheet">
+    <link href="{% static 'css/colors/bidssColors.css' %}" id="theme" rel="stylesheet">
+    <style>
+        .crmTitle {
+            font-weight: bold;
+            color: #24378d;
+            text-align: center !important;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="preloader">
+        <div class="loader">
+            <div class="loader__figure"></div>
+            <p class="loader__label">Tickets BIDSS</p>
+        </div>
+    </div>
+    <section id="wrapper" class="login-register login-sidebar"
+        style="background-image:url({% static 'images/login.jpg' %});">
+        <div class="login-box card">
+            <div class="card-body">
+                <form class="form-horizontal form-material" id="loginform" autocomplete="off" method="POST">
+                    {% csrf_token %}
+
+                    <h3 class="text-center crmTitle">Activación Cuenta TICKETS</h3>
+                    {% include 'mensajes.html' %}
+                    {% for field in form %}
+                    <div class="form-group g-mb-20">
+                        {{ field.label_tag }}
+                        {{ field }}
+                    
+                        {% if field.help_text %}
+                        <small style="color: grey">{{ field.help_text }}</small>
+                        {% endif %}
+                    
+                        {% for error in field.errors %}
+                        <p style="color: red">{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                    {% endfor %}
+                    <br>
+                    <div class="form-group text-center m-t-20">
+                        <div class="col-xs-12">
+                            <button class="btn btn-info btn-lg btn-block text-uppercase btn-rounded"
+                                type="submit">Activar</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+    <script src="{% static 'plugins/jquery/jquery.min.js' %}"></script>
+    <script src="{% static 'plugins/bootstrap/js/popper.min.js' %}"></script>
+    <script src="{% static 'plugins/bootstrap/js/bootstrap.min.js' %}"></script>
+    <script type="text/javascript">
+        $(function () {
+            $(".preloader").fadeOut();
+        });
+        $(function () {
+            $('[data-toggle="tooltip"]').tooltip()
+        });
+        $("#loginform").find("input").addClass('form-control');
+        // ============================================================== 
+        // Login and Recover Password 
+        // ============================================================== 
+        $('#to-recover').on("click", function () {
+            $("#loginform").slideUp();
+            $("#recoverform").fadeIn();
+        });
+    </script>
+</body>
+
+</html>

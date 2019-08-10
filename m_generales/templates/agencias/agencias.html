@@ -1,0 +1,122 @@
+{% extends "base.html" %}
+{% load staticfiles %} 
+
+{% block content %}
+    <link rel="stylesheet" type="text/css" href="{% static 'plugins/DataTables/dataTables.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'plugins/DataTables/DataTables/css/dataTables.bootstrap4.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'plugins/DataTables/Buttons/css/buttons.bootstrap4.min.css' %}">
+    <div class="container-fluid">
+        <div class="row page-titles">
+            <div class="col-md-5 align-self-center">
+                <h3 class="text-themecolor">Agencias</h3>
+            </div>
+            <div class="col-md-7 align-self-center">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="javascript:void(0)">Inicio</a></li>
+                    <li class="breadcrumb-item active">Listado Agencias</li>
+                </ol>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title">Listado de Agencias</h4>
+                        <hr>
+                        <div class="row">
+                            <div class="col-lg-6">
+                                {% if perms.auth.ver_agencia_list %}
+                                    <a href="#!" class="btn btn-info btn-sm btn-rounded" data-toggle="modal" data-target="#mdlCrearAgencia" data-whatever="@fat">Nueva Agencia</a>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="table-responsive m-t-40">
+                            <table id="tblAgencias" class="display nowrap table table-hover table-striped" cellspacing="0" width="100%">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Nombre</th>
+                                        <th>Estado</th>
+                                        <th>Acción</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for x in listado_agencias  %}
+                                        <tr> 
+                                           <td>{{forloop.counter}}</td>
+                                           <td>{{x.agencia_nombre}}</td>
+                                           <td>{%if x.agencia_estado %}Activa{% else %}Inactiva{% endif %}</td>
+                                           <td>
+                                                {% if perms.auth.editar_agencia %}
+                                                    <a href="#!" class="btn btn-primary btn-xs btn-rounded editar_agencia" data-id="{{x.agencia_id}}" data-nombre="{{x.agencia_nombre}}" data-estado="{{x.agencia_estado}}">Editar</a>
+                                                    <a href="{% url 'asignar_personal' x.agencia_id %}" class="btn btn-secondary btn-xs btn-rounded">Asignar personal</a>
+                                                {% endif %}
+                                            </td>
+                                        </tr>
+                                    {% endfor %} 
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div> 
+            </div>
+        </div> 
+    </div>
+    {% include 'agencias/crear_agencia.html' %}
+    {% include 'agencias/editar_agencia.html' %}
+{% endblock content %}
+ 
+{% block javascript %}
+    <script src="{% static 'plugins/DataTables/datatables.min.js' %} "></script>
+    <script src="{% static 'plugins/DataTables/datatables.min.js' %} "></script>
+    <script src="{% static 'plugins/DataTables/DataTables/js/dataTables.bootstrap4.min.js' %}"></script>
+    <script src="{% static 'plugins/DataTables/Buttons/js/buttons.bootstrap4.min.js' %}"></script>
+    <script src="{% static 'plugins/moment/moment.js' %}"></script>
+    <script>
+        $(document).ready(function(){
+           
+            $('#tblAgencias').DataTable({
+                "language":{
+                    "sProcessing":     "Procesando...",
+                    "sLengthMenu":     "Mostrar _MENU_ registros",
+                    "sZeroRecords":    "No se encontraron resultados",
+                    "sEmptyTable":     "Ningún dato disponible en esta tabla",
+                    "sInfo":           "Mostrando del _START_ al _END_ de un total de _TOTAL_ registros",
+                    "sInfoEmpty":      "Mostrando del 0 al 0 de un total de 0 registros",
+                    "sInfoFiltered":   "(filtrado de un total de _MAX_ registros)",
+                    "sInfoPostFix":    "",
+                    "sSearch":         "Buscar:",
+                    "sUrl":            "",
+                    "sInfoThousands":  ",",
+                    "sLoadingRecords": "Cargando...",
+                    "oPaginate": {
+                        "sFirst":    "Primero",
+                        "sLast":     "Último",
+                        "sNext":     "Siguiente",
+                        "sPrevious": "Anterior"
+                    },
+                    "oAria": {
+                        "sSortAscending":  ": Activar para ordenar la columna de manera ascendente",
+                        "sSortDescending": ": Activar para ordenar la columna de manera descendente"
+                    }
+                }
+            });
+
+            $(document).on('click', '.editar_agencia', function(){
+                var id = $(this).data('id');
+                var nombre = $(this).data('nombre');
+                var estado = $(this).data('estado');
+                console.log(estado);
+                $('#mdlEditarAgencia').find('#idUpd_agencia_id').val(id);
+                $('#mdlEditarAgencia').find('#idUpd_agencia_nombre').val(nombre);
+                if(estado == 'True'){
+                    $('#mdlEditarAgencia').find('#idUpd_agencia_estado option:eq(0)').prop('selected', true);
+                }else{
+                    $('#mdlEditarAgencia').find('#idUpd_agencia_estado option:eq(1)').prop('selected', true);
+                }
+                $('#mdlEditarAgencia').modal('show');
+            });
+        });
+    </script>
+{% endblock %}

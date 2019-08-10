@@ -1,0 +1,23 @@
+<div class="modal fade" id="mdlCrearAgencia" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel1">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header"> 
+                <h4 class="modal-title" id="exampleModalLabel1">Nueva Agencia</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            </div>
+            <form method="POST" action="{% url 'crear_agencia' %}" autocomplete="off" accept-charset="utf-8">
+                <div class="modal-body">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="message-text" class="control-label">Nombre:</label>
+                        <input type="text" class="form-control" id="id_agencia_nombre" name="agencia_nombre" required maxlength="50">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+                    <button type="submit" class="btn btn-info">Aceptar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

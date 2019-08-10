@@ -1,0 +1,277 @@
+{% extends "base.html" %}
+{% load staticfiles %} 
+
+{% block content %}
+    <style type="text/css">
+        .div_scroll{
+            height: 400px;
+            overflow-y: scroll;
+        }
+        #id_arrow{
+            padding-top: 200px;
+        }
+    </style>
+    <div class="container-fluid">
+        <div class="row page-titles">
+            <div class="col-md-5 align-self-center">
+                <h3 class="text-themecolor">Agencias</h3>
+            </div>
+            <div class="col-md-7 align-self-center"> 
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{% url 'agencias' %}">Agencias</a></li>
+                    <li class="breadcrumb-item active">Asignar Personal a Agencia</li>
+                </ol>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title">Asignar Personal a <b>{{agencia.agencia_nombre}}</b></h4>
+                        <input type="hidden" name="agencia_id" value="{{agencia.agencia_id}}" id="agencia_id">
+                        <hr>
+                        <br>
+                        <div class="row">
+                            <div class="col-md-5">
+                                <div class="div_scroll">
+                                    <table id="tblNoAsinados" class="display nowrap table table-hover table-striped" cellspacing="0" width="100%">
+                                        <thead>
+                                            <tr>
+                                                <th colspan="2" class="text-center"><b>Usuarios sin asignar</b></th>
+                                            </tr>
+                                            <tr> 
+                                               <th colspan="2"><input type="text" class="form-control" id="myInput" onkeyup="myFunction()" placeholder="Buscar por AD, nombre, apellido..."></th> 
+                                            </tr>
+                                            <tr>
+                                                <th>#</th>
+                                                <th>Nombre Usuario</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for x in listau_sin_asing %}
+                                                <tr>
+                                                    <td>
+                                                        <div class="form-group">
+                                                            <div class="checkbox checkbox-success">
+                                                                <input id="checkbox_{{x.id}}" type="checkbox" class="checkboxUserAsignar" data-id="{{x.id}}">
+                                                                <label for="checkbox_{{x.id}}"></label>
+                                                            </div>
+                                                        </div>
+                                                    </td> 
+                                                    <td>{{x.first_name}} {{x.last_name}}({{x.username}})</td>
+                                                </tr>
+                                            {% endfor %}
+                                            <tr></tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="col-md-2  text-center" >
+                                <div id="id_arrow" >
+                                    <button class="btn btn-primary btn-sm btn-rounded" id="btnAsignar"><span><i class="mdi mdi-arrow-right-bold"></i></span></button>
+                                    <br>
+                                    <br>
+                                    <button class="btn btn-primary btn-sm btn-rounded" id="btnQuitar"><span><i class="mdi mdi-arrow-left-bold"></i></span></button>
+                                </div>
+                            </div>
+                            <div class="col-md-5">
+                                <div class="div_scroll">
+                                    <table id="tblAsignados" class="display nowrap table table-hover table-striped" cellspacing="0" width="100%">
+                                        <thead>
+                                            <tr>
+                                                <th colspan="2" class="text-center"><b>Usuarios asignados</b></th>
+                                            </tr>
+                                            <tr> 
+                                               <th colspan="2"><input type="text" class="form-control" id="myInput2" onkeyup="myFunction2()" placeholder="Buscar por AD, nombre, apellido..."></th> 
+                                            </tr>
+                                            <tr>
+                                                <th>#</th> 
+                                                <th>Nombre Usuario</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for x in listu_agencia %}
+                                                <tr>
+                                                    <td>
+                                                        <div class="form-group">
+                                                            <div class="checkbox checkbox-success">
+                                                                <input id="checkbox_{{x.user_agencia_id}}" type="checkbox" class="checkboxUserAsignados" data-id="{{x.user_agencia_id}}">
+                                                                <label for="checkbox_{{x.user_agencia_id}}"></label>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td>{{x.user__first_name}} {{x.user__last_name}}({{x.user__username}})</td>
+                                                </tr>
+                                            {% endfor %}
+                                            <tr></tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div> 
+            </div>
+        </div> 
+    </div>
+{% endblock content %}
+{% block javascript %}
+    <script>
+        $(document).ready(function(){
+            $(document).on('click', '#btnAsignar', function(){
+                var userAsignarArray = new Array();
+                var existe = false;
+                $('body').find('.checkboxUserAsignar').each(function(){
+                    if($(this).is(':checked')){
+                        existe = true;
+                        userAsignarArray.push($(this).data('id'));
+                    }
+                });
+                var userAsignarJson = JSON.stringify(userAsignarArray);
+                var agencia_id = $('#agencia_id').val();
+                 if(existe == true){
+                    $(".preloader").fadeIn();
+                    $.ajax({
+                        type: "GET",
+                        data: {
+                          codigo : agencia_id,
+                          userAsignarJson: userAsignarJson,
+                          metodo: 'asignar',
+                        },
+                        url: "{% url 'asignar_personal' agencia.agencia_id %}",
+
+                        success: function(data){
+                            fullTblNoAsinados(data.listau_sin_asing);
+                            fullTblAsignados(data.listado_user_agencia);
+                            $(".preloader").fadeOut();
+                        },
+                        error: function(jqXHR, textStatus, errorThrown) {
+                            alert(textStatus + ': ' + errorThrown +'. '+'Intenta de Nuevo');
+                            $(".preloader").fadeOut();
+                        },
+                        timeout: 10000
+                    });
+                 }else{
+                    alert('Seleccione usuario (s) a asignar');
+                 }
+            });
+
+            $(document).on('click', '#btnQuitar', function(){
+                var userAsignados = new Array();
+                var existe = false;
+                $('body').find('.checkboxUserAsignados').each(function(){
+                    if($(this).is(':checked')){
+                        existe = true;
+                        userAsignados.push($(this).data('id'));
+                    }
+                });
+                var userAsignadosJson = JSON.stringify(userAsignados);
+                var agencia_id = $('#agencia_id').val();
+                $(".preloader").fadeIn();
+                if(existe == true){
+                    $.ajax({
+
+                        type: "GET",
+                        data: {
+                          codigo : agencia_id,
+                          userAsignadosJson: userAsignadosJson,
+                          metodo: 'quitar',
+                        },
+                        url: "{% url 'asignar_personal' agencia.agencia_id %}",
+
+                        success: function(data){
+                            fullTblNoAsinados(data.listau_sin_asing);
+                            fullTblAsignados(data.listado_user_agencia);
+                            $(".preloader").fadeOut();
+                        },
+                        error: function(jqXHR, textStatus, errorThrown) {
+                            alert(textStatus + ': ' + errorThrown +'. '+'Intenta de Nuevo');
+                            $(".preloader").fadeOut();
+                        },
+                        timeout: 10000
+                    });
+                }else{
+                    alert('Seleccione usuario (s) a quitar');
+                }
+            });
+
+            function fullTblNoAsinados(data){
+                $('#tblNoAsinados').find('tbody').empty();
+                $.each(data, function(key, val){
+                    $('#tblNoAsinados').find('tbody').append([
+                            '<tr>',
+                                '<td>',
+                                    '<div class="form-group">',
+                                        '<div class="checkbox checkbox-success">',
+                                            '<input id="checkbox_'+val.id +'" type="checkbox" class="checkboxUserAsignar" data-id="'+val.id+'">',
+                                            '<label for="checkbox_'+val.id+'"></label>',
+                                        '</div>',
+                                    '</div>',
+                                '</td> ',
+                                '<td>'+val.first_name+' '+val.last_name+' ('+val.username+')</td>',
+                            '</tr>'
+                        ].join(''));
+                })
+            }
+            function fullTblAsignados(data){
+                $('#tblAsignados').find('tbody').empty();
+                $.each(data, function(key, val){
+                    $('#tblAsignados').find('tbody').append([
+                            '<tr>',
+                                '<td>',
+                                    '<div class="form-group">',
+                                        '<div class="checkbox checkbox-success">',
+                                            '<input id="checkbox_'+val.user_agencia_id +'" type="checkbox" class="checkboxUserAsignados" data-id="'+val.user_agencia_id+'">',
+                                            '<label for="checkbox_'+val.user_agencia_id+'"></label>',
+                                        '</div>',
+                                    '</div>',
+                                '</td> ',
+                                '<td>'+val.user__first_name+' '+val.user__last_name+' ('+val.user__username+')</td>',
+                            '</tr>'
+                        ].join(''));
+                })
+            }
+        });
+    </script>
+    <script>
+        function myFunction() {
+          var input, filter, table, tr, td, i, txtValue;
+          input = document.getElementById("myInput");
+          filter = input.value.toUpperCase();
+          table = document.getElementById("tblNoAsinados");
+          tr = table.getElementsByTagName("tr");
+          for (i = 0; i < tr.length; i++) {
+            td = tr[i].getElementsByTagName("td")[1];
+            if (td) {
+              txtValue = td.textContent || td.innerText;
+              if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                tr[i].style.display = "";
+              } else {
+                tr[i].style.display = "none";
+              }
+            }       
+          }
+        }
+
+
+        function myFunction2() {
+          var input, filter, table, tr, td, i, txtValue;
+          input = document.getElementById("myInput2");
+          filter = input.value.toUpperCase();
+          table = document.getElementById("tblAsignados");
+          tr = table.getElementsByTagName("tr");
+          for (i = 0; i < tr.length; i++) {
+            td = tr[i].getElementsByTagName("td")[1];
+            if (td) {
+              txtValue = td.textContent || td.innerText;
+              if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                tr[i].style.display = "";
+              } else {
+                tr[i].style.display = "none";
+              }
+            }       
+          }
+        }
+    </script>
+{% endblock %}

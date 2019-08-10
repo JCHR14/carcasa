@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+{% load staticfiles %} 
+{% block title %}
+Usuarios | Tickets BIDSS Technology
+{% endblock title %}
+{% block content %}
+    <link rel="stylesheet" type="text/css" href="{% static 'plugins/DataTables/dataTables.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'plugins/DataTables/DataTables/css/dataTables.bootstrap4.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'plugins/DataTables/Buttons/css/buttons.bootstrap4.min.css' %}">
+    <div class="container-fluid">
+        <!--
+        <div class="row page-titles">
+            <div class="col-md-5 align-self-center">
+                <h3 class="text-themecolor">Usuarios </h3>
+            </div>
+            <div class="col-md-7 align-self-center">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="javascript:void(0)">Inicio</a></li>
+                    <li class="breadcrumb-item active">Usuarios</li>
+                </ol>
+            </div>
+        </div>
+        -->
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title">Listado de Usuarios</h4>
+                        <hr>
+                        <div class="table-responsive">
+                            <table id="tblUsuarios" class="display nowrap table table-hover table-striped" cellspacing="0" width="100%">
+                                <thead>
+                                    <tr>
+                                        <th>Nombre</th>
+                                        <th>Correo</th>
+                                        <th>Estado</th>
+                                        <th><a href="{% url 'crear_usuario' %}" class="btn btn-info btn-sm">Crear usuario</a></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for x in listado_usuarios %}
+                                        <tr>
+                                            <td>{{x.first_name}} {{x.last_name}}</td>
+                                            <td>{{x.username}}</td>
+                                            <td>{% if x.is_active%}activo {% else %} inactivo {% endif %}</td>
+                                            <td>
+                                                <a href="{% url 'editar_usuario' x.id %}" class="btn btn-secondary btn-xs">Editar</a>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div> 
+            </div>
+        </div> 
+    </div>
+{% endblock content %}
+ 
+{% block javascript %}
+    <script src="{% static 'plugins/DataTables/datatables.min.js' %} "></script>
+    <script src="{% static 'plugins/DataTables/datatables.min.js' %} "></script>
+    <script src="{% static 'plugins/DataTables/DataTables/js/dataTables.bootstrap4.min.js' %}"></script>
+    <script src="{% static 'plugins/DataTables/Buttons/js/buttons.bootstrap4.min.js' %}"></script>
+    <script>
+        
+        $(document).ready(function(){
+            $('#tblUsuarios').DataTable({
+                "language":{
+                    "sProcessing":     "Procesando...",
+                    "sLengthMenu":     "Mostrar _MENU_ registros",
+                    "sZeroRecords":    "No se encontraron resultados",
+                    "sEmptyTable":     "Ningún dato disponible en esta tabla",
+                    "sInfo":           "Mostrando del _START_ al _END_ de un total de _TOTAL_ registros",
+                    "sInfoEmpty":      "Mostrando del 0 al 0 de un total de 0 registros",
+                    "sInfoFiltered":   "(filtrado de un total de _MAX_ registros)",
+                    "sInfoPostFix":    "",
+                    "sSearch":         "Buscar:",
+                    "sUrl":            "",
+                    "sInfoThousands":  ",",
+                    "sLoadingRecords": "Cargando...",
+                    "oPaginate": {
+                        "sFirst":    "Primero",
+                        "sLast":     "Último",
+                        "sNext":     "Siguiente",
+                        "sPrevious": "Anterior"
+                    },
+                    "oAria": {
+                        "sSortAscending":  ": Activar para ordenar la columna de manera ascendente",
+                        "sSortDescending": ": Activar para ordenar la columna de manera descendente"
+                    }
+                }
+            });
+        });
+    </script>
+{% endblock %}

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-size: 14px;
+            margin: 0px;
+            padding: 0px;
+            text-align: center;
+            width: 100%;
+            background-color:gainsboro;
+        }
+    </style>
+</head>
+<body>
+    <img src="https://support.bi-dss.com/media/banner_correo.jpg">
+    <h4>Estimado (a): {{user.first_name}} {{user.last_name}} </h4>
+    <p>¡Se ha creado su usuario exitoasamente!</p>
+    <p>Ususario: {{user.email}}</p>
+    <p>Para Establecer su contraseña <a href="http://{{ domain }}/usuarios/activate/{{uid}}/{{token}}/">Click Aquí</a> <br>
+        si no funciona copie y pegue en su navegador el siguiente link <b>http://{{ domain }}/usuarios/activate/{{uid}}/{{token}}/</b>
+     </p>
+    <img src="https://support.bi-dss.com/media/Firmas email - BIDSS Personal NOC-02.png">
+</body>
+</html>

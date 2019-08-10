@@ -1,0 +1,140 @@
+{% extends "base.html" %}
+{% load staticfiles %} 
+
+{% block title %}Inicio | Tickets BIDSS Technology{% endblock title %}
+    
+{% block content %}
+<link href="{% static 'plugins/chartist-js/dist/chartist.min.css' %}" rel="stylesheet">
+<link href="{% static 'plugins/chartist-plugin-tooltip-master/dist/chartist-plugin-tooltip.css' %}" rel="stylesheet">
+<link href="{% static 'css/pages/dashboard2.css' %}" rel="stylesheet">
+    <div class="container-fluid">
+        <div class="row page-titles">
+            <div class="col-md-5 align-self-center">
+                <h3 class="text-themecolor">Dashboard </h3>
+            </div>
+            <div class="col-md-7 align-self-center">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="javascript:void(0)">Inicio</a></li>
+                    <li class="breadcrumb-item active">Dashboard</li>
+                </ol>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-4">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex no-block">
+                            <div class="m-r-20 align-self-center"><span class="lstick m-r-20"></span></div>
+                            <div class="align-self-center">
+                                <h6 class="text-muted m-t-10 m-b-0">Visitas</h6>
+                                <h2 class="m-t-0">0</h2></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex no-block">
+                            <div class="m-r-20 align-self-center"><span class="lstick m-r-20"></span></div>
+                            <div class="align-self-center">
+                                <h6 class="text-muted m-t-10 m-b-0">Llamadas</h6>
+                                <h2 class="m-t-0">0</h2></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex no-block">
+                            <div class="m-r-20 align-self-center"><span class="lstick m-r-20"></span></div>
+                            <div class="align-self-center">
+                                <h6 class="text-muted m-t-10 m-b-0">Correos</h6>
+                                <h2 class="m-t-0">0</h2></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-9 col-md-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex">
+                            <div>
+                                <h3 class="card-title m-b-5"><span class="lstick"></span>Cumplimiento de Gestiones</h3>
+                            </div>
+                            <!--
+                            <div class="ml-auto">
+                                <select class="custom-select b-0">
+                                    <option selected="">January 2017</option>
+                                    <option value="1">February 2017</option>
+                                    <option value="2">March 2017</option>
+                                    <option value="3">April 2017</option>
+                                </select>
+                            </div>
+                            -->
+                        </div>
+                    </div>
+                    <div class="bg-theme stats-bar">
+                        <div class="row">
+                            <div class="col-lg-3 col-md-4">
+                                <div class="p-20 active">
+                                    <h6 class="text-white">Total Gestiones</h6>
+                                    <h3 class="text-white m-b-0">0</h3>
+                                </div>
+                            </div>
+                            <div class="col-lg-3 col-md-4">
+                                <div class="p-20">
+                                    <h6 class="text-white">Total Mes</h6>
+                                    <h3 class="text-white m-b-0">0</h3>
+                                </div>
+                            </div>
+                            <div class="col-lg-3 col-md-4">
+                                <div class="p-20">
+                                    <h6 class="text-white">Total Semana</h6>
+                                    <h3 class="text-white m-b-0">0</h3>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div id="sales-overview2" class="p-relative" style="height:360px;"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-12">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title"><span class="lstick"></span>Comparativo</h4>
+                        <div id="visitor" style="height:290px; width:100%;"></div>
+                        <table class="table vm font-14">
+                            <tr>
+                                <td class="b-0">Llamadas</td>
+                                <td class="text-right font-medium b-0">38.5%</td>
+                            </tr>
+                            <tr>
+                                <td>Visitas</td>
+                                <td class="text-right font-medium">38.5%</td>
+                            </tr>
+                            <tr>
+                                <td>Correos</td>
+                                <td class="text-right font-medium">23.1%</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+    </div>
+{% endblock content %}
+ 
+{% block javascript %}
+<script src="{% static 'plugins/chartist-js/dist/chartist.min.js' %}"></script>
+<script src="{% static 'plugins/chartist-plugin-tooltip-master/dist/chartist-plugin-tooltip.min.js' %}"></script>
+<script src="{% static 'js/dashboard2.js' %}"></script>
+{% endblock %}

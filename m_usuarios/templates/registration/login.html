@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+{% block content %}
+      <style type="text/css">
+        #formLogin{
+          border-radius: 25px;
+        }
+        .login_link:hover{
+          color: white !important;
+        }
+      </style>
+      <!-- Promo Block -->
+      <section class="g-py-100">
+        <div class="container">
+          <div class="row no-gutters">
+            <div class="col-md-3">
+            </div>
+            <div class="col-md-6">
+              <form class="g-brd-around g-brd-gray-light-v4 g-pa-30 g-mb-30 bg_my_amarillo" id="formLogin" autocomplete="off" method="POST">
+                <h3 class="color_my_morado toBold">Login</h3>
+                <hr>
+                {% csrf_token %}
+                {% if form.non_field_errors %}
+                    {{ form.non_field_errors }}
+                    <hr>
+                  {% endif %}
+                  {% for field in form %}
+                      {% if forloop.first %}
+                          <div class="form-group g-mb-20">
+                              <label>Correo Electrónico</label>
+                              {{ field }}
+                              {% if field.help_text %}
+                              <p class="textHelp">{{ field.help_text }}</p>
+                              {% endif %}
+                              {% for error in field.errors %}
+                              <p style="color: red">{{ error }}</p>
+                              {% endfor %}
+                              </p>
+                          </div>
+                      {% else %}
+                        <div class="form-group g-mb-20">
+                            {{ field.label_tag }}
+                            {{ field }}
+                            {% if field.help_text %}
+                            <p class="textHelp">{{ field.help_text }}</p>
+                            {% endif %}
+                            {% for error in field.errors %}
+                            <p style="color: red">{{ error }}</p>
+                            {% endfor %}
+                            </p>
+                        </div>
+                      {% endif %}
+                  {% endfor %}
+                <div class="row">
+                  <div class="col-md-12"><a href="{% url 'password_reset' %}" class="login_link color_my_morado " id="">¿Olvidó su contraseña?</a></div>
+                </div>
+                <!--
+                <div class="text-right">
+                  <input type="submit" name="btnGuardar" value="Aceptar" class="btn btn-md u-btn-primary g-rounded-50 g-mr-10 g-mb-15 btn_my_white color_my_morado ">
+                </div>
+              -->
+              <hr class="g-brd-gray-light-v4 g-mx-minus-30">
+                <div class="form-group text-center">
+                  <div class="col-xs-12 p-b-20">
+                    <button class="btn btn-block btn-lg u-btn-primary g-rounded-50 btn_my_white color_my_morado" type="submit">Ingresar</button>
+                  </div>
+                </div>
+                <div class="form-group m-b-0">
+                  <div class="col-sm-12 text-center">
+                    ¿No tienes cuenta? <a href="{% url 'suscribirse' %}" class=" login_link m-l-5 color_my_morado"><b>Suscríbete</b></a>
+                  </div>
+                </div>
+
+              </form>
+            </div>
+          </div>
+        </div>
+      </section>
+{% endblock content %}
+
+{% block javascript %}
+<script>
+  $(document).on('ready', function(){
+    $('#formLogin').find("input[type=text], input[type=password], input[type=email], input[type=date]").addClass('form-control form-control-md  bg_input_amarillo');
+    $('#formLogin').find('label').addClass('g-mb-10 toBold color_my_morado text-uppercase');  
+  });
+</script>
+{% endblock javascript %}

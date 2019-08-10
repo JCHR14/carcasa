@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+{% block title %}
+Crear Grupo | Tickets BIDSS Technology
+{% endblock title %} 
+{% block content %}
+    <link rel="stylesheet" type="text/css" href="{% static 'plugins/select2/dist/css/select2.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'plugins/select2/select2-bootstrap4.css' %}">
+    <div class="container-fluid">
+        <!--
+        <div class="row page-titles">
+            <div class="col-md-5 align-self-center">
+                <h3 class="text-themecolor">Grupos </h3>
+            </div>
+            <div class="col-md-7 align-self-center">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="javascript:void(0)">Listado Grupos</a></li>
+                    <li class="breadcrumb-item active">Nuevo Grupo</li>
+                </ol>
+            </div>
+        </div>
+        -->
+
+        <div class="row"> 
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title">Nuevo Grupo</h4>
+                        <h6 class="card-subtitle"></h6>
+                        <hr>
+                        <form method="POST" accept-charset="utf-8" autocomplete="off" >
+                          {% csrf_token %}
+                          <div class="row">
+                            <div class="col-md-6">
+                              <div class="form-group">
+                                <label>Nombre</label>
+                                <input type="text" name="name" id="id_name" class="form-control" maxlength="80" required>
+                              </div>
+                            </div>                            
+                          </div>
+                          <div class="row">
+                            <div class="col-md-12">
+                              <div class="form-group">
+                                <label>Permisos</label>
+                                <select name="permisos" id="id_permisos" class="form-control select2" multiple="" size="10" style="width:100%;">
+                                    {% for x in listado_permisos %}
+                                      <option value="{{x.id}}">{{x.content_type.app_label}} | {{x.codename}} | {{x.name}}</option>
+                                    {% endfor %}
+                                </select>
+                              </div>
+                            </div>
+                          </div>
+                          <hr>
+                          <div class="col-md-12">
+                            <input type="submit" name="btn_guardar" class="btn btn-success pull-right" value="Guardar">
+                          </div>
+                        </form>
+                    </div>
+                </div> 
+            </div>
+        </div> 
+    </div>
+{% endblock content %}
+ 
+{% block javascript %}
+  <script src="{% static 'plugins/select2/dist/js/select2.min.js' %}"></script>
+  <script>
+    $(document).ready(function(){
+      $(".select2").select2({});
+    });
+  </script>
+
+{% endblock %}

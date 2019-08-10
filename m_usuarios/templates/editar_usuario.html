@@ -1,0 +1,122 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+{% block title %}
+Editar Usuario | Tickets BIDSS Technology
+{% endblock title %}
+{% block content %}
+    <link rel="stylesheet" type="text/css" href="{% static 'plugins/select2/dist/css/select2.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'plugins/select2/select2-bootstrap4.css' %}">
+    <div class="container-fluid">
+        <!--
+        <div class="row page-titles">
+            <div class="col-md-5 align-self-center">
+                <h3 class="text-themecolor">Usuarios </h3>
+            </div>
+            <div class="col-md-7 align-self-center">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="javascript:void(0)">Listado Usuarios</a></li>
+                    <li class="breadcrumb-item active">Editar Usuario</li>
+                </ol>
+            </div> 
+        </div>
+        -->
+        <div class="row"> 
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title">Editar Usuario</h4>
+                        <h6 class="card-subtitle"></h6>
+                        <hr>
+                        <form method="POST" accept-charset="utf-8" autocomplete="off" >
+                          {% csrf_token %}
+                          <input type="hidden" name="user_id" value="{{usr.id}}">
+                          <div class="row">
+                            <div class="col-md-6">
+                              <div class="form-group">
+                                <label>Nombre</label>
+                                <input type="text" name="first_name" id="id_first_name" class="form-control" 
+                                maxlength="30"  value="{{usr.first_name}}" required>
+                              </div>
+                            </div>
+                            <div class="col-md-6">
+                              <div class="form-group">
+                                <label>Apellidos</label>
+                                <input type="text" name="last_name" id="id_last_name" class="form-control" 
+                                maxlength="30"  value="{{usr.last_name}}" required >
+                              </div>
+                            </div>
+                            <div class="col-md-6">
+                              <div class="form-group">
+                                <label>Correo Electrónico</label>
+                                <input type="email" name="email" id="id_email" class="form-control" 
+                                maxlength="254"  value="{{usr.email}}" required readonly>
+                              </div>
+                            </div>
+                            <div class="col-md-6">
+                              <div class="form-group">
+                                <label>Estado</label>
+                                <select name="is_active" id="id_is_active" class="form-control" required="" >
+                                  <option value="1" {% if usr.is_active%} selected {% endif %} >Activo</option>
+                                  <option value="0" {% if not usr.is_active %} selected {% endif %} >Inactivo</option>
+                                </select>
+                              </div>
+                            </div>
+
+                            
+                            <div class="col-md-6">
+                              <div class="form-group">
+                                <label>Grupos de usuarios</label>
+                                <select name="grupos" id="id_grupos" class="form-control select2" multiple="" style="width: 100%;">
+                                    {% for x in grupos %}
+                                      {% if x in  usr.groups.all %}
+                                        <option value="{{x.id}}" selected>{{x.name}}</option>
+                                      {% else %}
+                                        <option value="{{x.id}}">{{x.name}}</option>
+                                      {% endif %}
+                                    {% endfor %}
+                                </select>
+                              </div>
+                            </div>
+                          </div>
+                          <hr>
+                          <div class="col-md-12">
+                            <input type="submit" name="btn_guardar" class="btn btn-success pull-right" value="Guardar">
+                          </div>
+                        </form>
+                    </div>
+                </div> 
+            </div>
+        </div> 
+    </div>
+{% endblock content %}
+ 
+{% block javascript %}
+  <script src="{% static 'plugins/select2/dist/js/select2.min.js' %}"></script>
+  <script>
+    $(document).ready(function(){
+      $(".select2").select2({});
+      $(document).on('click', '#btnNuevoUs', function(){
+        $(".preloader").fadeIn();
+        $.ajax({
+          type: "GET",
+          data: {
+            info : $('#id_username').val(),
+          },
+          url: "{% url 'crear_usuario'  %}",
+          success: function(data){
+            $('#id_first_name').val(data.nombre);
+            $('#id_last_name').val(data.apellido);
+            $('#id_email').val(data.email);
+            $(".preloader").fadeOut();
+          },
+          error: function(jqXHR, textStatus, errorThrown) {
+              $(".preloader").fadeOut();
+              alert(textStatus + ': ' + errorThrown +'. '+'Intenta de Nuevo');
+          },
+          timeout: 10000
+        }); 
+      });
+    });
+  </script>
+
+{% endblock %}

@@ -1,0 +1,200 @@
+{% load staticfiles %}
+<!DOCTYPE html>  
+<html lang="es">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <!-- Tell the browser to be responsive to screen width -->
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="description" content=" Sistemas de gestion de clientes">
+        <meta name="author" content="Juan Carlos Hernandez Reyes">
+        <!-- Favicon icon -->
+        <link rel="icon" type="image/png" sizes="32x32" href="{% static 'images/favicon.png' %}">
+        <title>{% block title %} {% endblock title %}</title>
+        <link href="{% static 'plugins/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+        <link href="{% static 'plugins/perfect-scrollbar/css/perfect-scrollbar.css' %}" rel="stylesheet">
+        <link href="{% static 'plugins/c3-master/c3.min.css' %}" rel="stylesheet">
+        <link href="{% static 'css/style.css' %}" rel="stylesheet">
+        <link href="{% static 'css/myStyle.css' %}" rel="stylesheet">
+        <link href="{% static 'css/colors/bidssColors.css' %}" id="theme" rel="stylesheet">
+    </head>
+    <body class="fix-header fix-sidebar card-no-border">
+        <div class="preloader">
+            <div class="loader">
+                <div class="loader__figure"></div>
+                <p class="loader__label">Tickets BIDSS</p>
+            </div>
+        </div> 
+        <div id="main-wrapper">
+            <header class="topbar">
+                <nav class="navbar top-navbar navbar-expand-md navbar-light">
+                    <div class="navbar-header" id="bg_logo">
+                        <a class="navbar-brand" href="{% url 'inicio' %}">
+                            <b>
+                                <img src="{% static 'images/logoWhite.png' %}" alt="homepage" class="dark-logo" width="80%" />
+                            </b>
+                        </a>
+                    </div>
+                    <div class="navbar-collapse">
+                        <ul class="navbar-nav mr-auto">
+                            <li class="nav-item"><a class="nav-link nav-toggler hidden-md-up waves-effect waves-dark" href="javascript:void(0)"><i class="ti-menu"></i></a></li>
+                            <li class="nav-item"><a class="nav-link sidebartoggler hidden-sm-down waves-effect waves-dark" href="javascript:void(0)"><i class="ti-menu"></i></a></li>
+                        </ul>
+                        <ul class="navbar-nav my-lg-0">
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle waves-effect waves-dark" href="#!" id="2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><b>TICKETS</b></a>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle waves-effect waves-dark" href="" id="2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="mdi mdi-email"></i>
+                                    <div class="notify"> <span class=""></span> <span class=""></span> </div>
+                                </a>
+                                <div class="dropdown-menu mailbox dropdown-menu-right animated bounceInDown" aria-labelledby="2">
+                                    <ul>
+                                        <li>
+                                            <div class="drop-title">Notificaciones</div>
+                                        </li>
+                                        <li>
+                                            <div class="message-center">
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle waves-effect waves-dark" href="" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <i class="fa fa-user" class="icon_user"></i>
+                                </a>
+                                <div class="dropdown-menu dropdown-menu-right animated flipInY">
+                                    <ul class="dropdown-user">
+                                        <li>
+                                            <div class="dw-user-box">
+                                                <div class="u-img"><i class="fa fa-user" class="icon_user"></i></div>
+                                                <div class="u-text">
+                                                    <h4>{{request.user.username}}</h4>
+                                                    <br>
+                                                </div>
+                                            </div>
+                                            <div class="dw-user-box">
+                                                <div class="u-img"><i class="fa fa-group" class="icon_user"></i></div>
+                                                <div class="u-text">
+                                                    {% for g in request.user.groups.all %}
+                                                        <h5>{{g.name}}</h5>
+                                                    {% endfor %}
+                                                </div>
+                                            </div>
+                                        </li>
+                                        <li role="separator" class="divider"></li>
+                                        <li><a href="{% url 'change_password' %}"><i class="fa fa-lock"></i> Cambiar Contraseña</a></li>
+                                        <li><a href="{% url 'salir' %}"><i class="fa fa-power-off"></i> Logout</a></li>
+                                    </ul>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </nav>
+            </header>
+
+            <aside class="left-sidebar">
+                <div class="scroll-sidebar">
+                    <nav class="sidebar-nav">
+                        <ul id="sidebarnav">
+                            <li> 
+                                <a class="" href="{% url 'inicio' %}" aria-expanded="false"><i class="mdi mdi-home"></i><span class="hide-menu">Inicio</span></a>
+                            </li>
+                            {% if perms.gestion.ver_gestion_list %}
+                            <li> 
+                                <a class="has-arrow waves-effect waves-dark" href="#" aria-expanded="false"><i class="mdi mdi-briefcase-check"></i><span class="hide-menu">Tickets</span></a>
+                                <ul aria-expanded="false" class="collapse"> 
+                                    <li><a href="#!{#% url 'listado_gestiones' %#}">Listado de Tickets</a></li>
+                                    <li><a href="#!">Historico</a></li>
+                                </ul>
+                            </li>
+                            {% endif %}
+                            {% if perms.cliente.ver_cliente_list %}
+                            <li> 
+                                <a class="has-arrow waves-effect waves-dark" href="#" aria-expanded="false"><i class="mdi mdi-account-multiple"></i><span class="hide-menu">Clientes</span></a>
+                                <ul aria-expanded="false" class="collapse">
+                                    <li><a href="#!{#% url 'listado_clientes' %#}?page=1&search=">Listado de Clientes </a></li>
+                                </ul>
+                            </li>
+                            {% endif %}
+                            
+                            {% if perms.usuarios.listar_usuarios or perms.auth.ver_grupo_list or perms.agencia.ver_agencia_list or perms.auth.ver_producto_list  %}    
+                                <li> 
+                                    <a class="has-arrow waves-effect waves-dark" href="#" aria-expanded="false"><i class="mdi mdi-settings"></i><span class="hide-menu">Configuración</span></a>
+                                    <ul aria-expanded="false" class="collapse">
+                                        {% if perms.usuarios.listar_usuarios %}
+                                            <li><a href="{% url 'listado_usuarios' %}">Usuarios</a></li>
+                                        {% endif %}
+
+                                        {% if perms.grupos.listar_grupo_usuarios %}
+                                            <li><a href="{% url 'listado_grupos' %}">Grupos</a></li>
+                                        {% endif %}
+                                        
+                                        {% if perms.agencia.ver_agencia_list %}
+                                            <li><a href="#!{#% url 'agencias' %#}">Empresas Clientes</a></li>
+                                        {% endif %}
+
+                                        {% if perms.auth.ver_producto_list %}
+                                            <li><a href="#!{#% url 'productos' %#}">Productos</a></li>
+                                        {% endif %}
+                                    </ul>
+                                </li>
+                            {% endif %}
+                                
+
+                        </ul>
+                    </nav>
+                </div>
+            </aside>
+            <div class="page-wrapper">
+                {% include 'mensajes.html' %}
+                {% block content %}
+
+                {% endblock content %}
+                <footer class="footer"> <b class="toBold" >© <span id="idAnio"></span> Bi-DSS Technology</b> </footer>
+            </div>
+        </div>
+        <script src="{% static 'plugins/jquery/jquery.min.js' %} "></script>
+        <script src="{% static 'plugins/bootstrap/js/popper.min.js' %} "></script>
+        <script src="{% static 'plugins/bootstrap/js/bootstrap.min.js' %} "></script>
+        <script src="{% static 'js/perfect-scrollbar.jquery.min.js' %}"></script>
+        <script src="{% static 'js/waves.js' %}"></script>
+        <script src="{% static 'js/sidebarmenu.js' %}"></script>
+        <script src="{% static 'js/custom.min.js' %}"></script>
+        <script src="{% static 'plugins/d3/d3.min.js' %}"></script>
+        <script src="{% static 'plugins/c3-master/c3.min.js' %}"></script>
+        <!--<script src="{% static 'plugins/toast-master/js/jquery.toast.js' %}"></script> -->
+        <script src="{% static 'js/toastr.js' %}"></script>
+        <script src="{% static 'js/DjangoAjax.js' %}"></script>
+        <script src="{% static 'plugins/styleswitcher/jQuery.style.switcher.js' %}"></script>
+        <script type="text/javascript">
+            $(document).ready(function(){
+                var d = new Date();
+                var n = d.getFullYear();
+                $('#idAnio').html(n);
+
+                setTimeout(function(){
+                    $('.alert').fadeOut('slow');
+                },5000);
+            });
+        </script>
+        <script>
+            $(document).ready(function(){
+                $(document).on('change', '.fechaGestion', function(e){
+                    var d1 = new Date($(this).val());
+                    var d2 = new Date();
+                    if (d1 !=''){
+                        if(d1.getTime() < d2.getTime()){
+                            alert('Fecha de gestion no puede ser menor  que ahora');
+                            $(this).val('');
+                        }
+                    }
+                });
+            });
+        </script>
+
+        {% block javascript %}
+        {% endblock %}
+    </body>
+</html>
