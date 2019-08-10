@@ -7,20 +7,6 @@ Crear Usuario | Tickets BIDSS Technology
     <link rel="stylesheet" type="text/css" href="{% static 'plugins/select2/dist/css/select2.min.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'plugins/select2/select2-bootstrap4.css' %}">
     <div class="container-fluid">
-        <!--
-        <div class="row page-titles">
-            <div class="col-md-5 align-self-center">
-                <h3 class="text-themecolor">Usuarios </h3>
-            </div>
-            <div class="col-md-7 align-self-center">
-                <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="javascript:void(0)">Listado Usuarios</a></li>
-                    <li class="breadcrumb-item active">Nuevo Usuario</li>
-                </ol>
-            </div>
-        </div>
-        -->
-
         <div class="row"> 
             <div class="col-12">
                 <div class="card">
@@ -31,25 +17,21 @@ Crear Usuario | Tickets BIDSS Technology
                         <form method="POST" accept-charset="utf-8" autocomplete="off" >
                           {% csrf_token %}
                           <div class="row">
+                            {% for field in form %}
                             <div class="col-md-6">
-                              <div class="form-group">
-                                <label>Nombre</label>
-                                <input type="text" name="first_name" id="id_first_name" class="form-control" maxlength="30" required>
+                              <div class="form-group g-mb-20">
+                                {{ field.label_tag }}
+                                {{ field }}
+                                {% if field.help_text %}
+                                <p class="textHelp">{{ field.help_text }}</p>
+                                {% endif %}
+                                {% for error in field.errors %}
+                                <p style="color: red">{{ error }}</p>
+                                {% endfor %}
+                                </p>
                               </div>
                             </div>
-                            <div class="col-md-6">
-                              <div class="form-group">
-                                <label>Apellidos</label>
-                                <input type="text" name="last_name" id="id_last_name" class="form-control" maxlength="30" required>
-                              </div>
-                            </div>
-                            <div class="col-md-6">
-                              <div class="form-group">
-                                <label>Correo Electrónico</label>
-                                <input type="email" name="email" id="id_email" class="form-control" 
-                                maxlength="254" required >
-                              </div>
-                            </div>
+                            {% endfor %}
                             <div class="col-md-6">
                               <div class="form-group">
                                 <label>Grupos de usuarios</label>
@@ -78,27 +60,7 @@ Crear Usuario | Tickets BIDSS Technology
   <script>
     $(document).ready(function(){
       $(".select2").select2({});
-      $(document).on('click', '#btnNuevoUs', function(){
-        $(".preloader").fadeIn();
-        $.ajax({
-          type: "GET",
-          data: {
-            info : $('#id_username').val(),
-          },
-          url: "{% url 'crear_usuario'  %}",
-          success: function(data){
-            $('#id_first_name').val(data.nombre);
-            $('#id_last_name').val(data.apellido);
-            $('#id_email').val(data.email);
-            $(".preloader").fadeOut();
-          },
-          error: function(jqXHR, textStatus, errorThrown) {
-              $(".preloader").fadeOut();
-              alert(textStatus + ': ' + errorThrown +'. '+'Intenta de Nuevo');
-          },
-          timeout: 10000
-        }); 
-      });
+      $("input[type=text], input[type=password], input[type=email], input[type=tel]").addClass('form-control');
     });
   </script>
 

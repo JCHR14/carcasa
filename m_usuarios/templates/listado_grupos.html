@@ -2,27 +2,11 @@
 {% load staticfiles %}
 
 {% block title %}
-    Grupo de Usuarios | Tickets BIDSS Technology
+    Grupo de Usuarios | BIDSS Technology
 {% endblock title %}
     
 {% block content %}
-    <link rel="stylesheet" type="text/css" href="{% static 'plugins/DataTables/dataTables.min.css' %}">
-    <link rel="stylesheet" type="text/css" href="{% static 'plugins/DataTables/DataTables/css/dataTables.bootstrap4.min.css' %}">
-    <link rel="stylesheet" type="text/css" href="{% static 'plugins/DataTables/Buttons/css/buttons.bootstrap4.min.css' %}">
     <div class="container-fluid">
-        <!--
-        <div class="row page-titles">
-            <div class="col-md-5 align-self-center">
-                <h3 class="text-themecolor">Grupos </h3>
-            </div>
-            <div class="col-md-7 align-self-center">
-                <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="javascript:void(0)">Inicio</a></li>
-                    <li class="breadcrumb-item active">Grupos</li>
-                </ol>
-            </div>
-        </div>
-        -->
         <div class="row">
             <div class="col-12">
                 <div class="card">
@@ -35,7 +19,7 @@
                                     <tr>
                                         <th>#</th>
                                         <th>Nombre</th>
-                                        <th><a href="{% url 'crear_grupo' %}" class="btn btn-info btn-sm">Crear Grupo</a></th>
+                                        <th><a href="{% url 'crear_grupo' %}" class="btn btn-danger btn-sm">Crear Grupo</a></th>
                                     </tr>
                                 </thead>
                                 <tbody>

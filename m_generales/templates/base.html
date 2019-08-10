@@ -6,7 +6,7 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <!-- Tell the browser to be responsive to screen width -->
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="description" content=" Sistemas de gestion de clientes">
+        <meta name="description" content="Descripción adecuada del sistema">
         <meta name="author" content="Juan Carlos Hernandez Reyes">
         <!-- Favicon icon -->
         <link rel="icon" type="image/png" sizes="32x32" href="{% static 'images/favicon.png' %}">
@@ -22,7 +22,7 @@
         <div class="preloader">
             <div class="loader">
                 <div class="loader__figure"></div>
-                <p class="loader__label">Tickets BIDSS</p>
+                <p class="loader__label">BIDSS</p>
             </div>
         </div> 
         <div id="main-wrapper">
@@ -42,7 +42,7 @@
                         </ul>
                         <ul class="navbar-nav my-lg-0">
                             <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle waves-effect waves-dark" href="#!" id="2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><b>TICKETS</b></a>
+                                <a class="nav-link dropdown-toggle waves-effect waves-dark" href="#!" id="2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><b>Bi-DSS</b></a>
                             </li>
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle waves-effect waves-dark" href="" id="2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="mdi mdi-email"></i>
@@ -102,6 +102,7 @@
                                 <a class="" href="{% url 'inicio' %}" aria-expanded="false"><i class="mdi mdi-home"></i><span class="hide-menu">Inicio</span></a>
                             </li>
                             {% if perms.gestion.ver_gestion_list %}
+                            <!--
                             <li> 
                                 <a class="has-arrow waves-effect waves-dark" href="#" aria-expanded="false"><i class="mdi mdi-briefcase-check"></i><span class="hide-menu">Tickets</span></a>
                                 <ul aria-expanded="false" class="collapse"> 
@@ -109,6 +110,7 @@
                                     <li><a href="#!">Historico</a></li>
                                 </ul>
                             </li>
+                            -->
                             {% endif %}
                             {% if perms.cliente.ver_cliente_list %}
                             <li> 
@@ -130,19 +132,9 @@
                                         {% if perms.grupos.listar_grupo_usuarios %}
                                             <li><a href="{% url 'listado_grupos' %}">Grupos</a></li>
                                         {% endif %}
-                                        
-                                        {% if perms.agencia.ver_agencia_list %}
-                                            <li><a href="#!{#% url 'agencias' %#}">Empresas Clientes</a></li>
-                                        {% endif %}
-
-                                        {% if perms.auth.ver_producto_list %}
-                                            <li><a href="#!{#% url 'productos' %#}">Productos</a></li>
-                                        {% endif %}
                                     </ul>
                                 </li>
                             {% endif %}
-                                
-
                         </ul>
                     </nav>
                 </div>

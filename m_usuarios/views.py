@@ -1,33 +1,25 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+import os 
 from django.shortcuts import render, redirect
 from django.http import *
 #from django.urls import reverse
+#from django.contrib.sites.shortcuts import get_current_site
+#from django.db import connection
+#from django.utils.encoding import force_bytes, force_text
+#from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.db import transaction
 from django.contrib.auth import authenticate, login as auth_login, logout
 from django.contrib.auth.decorators import login_required, permission_required
-from django.db import transaction
 from django.contrib.auth.hashers import check_password
 from django.contrib.auth.models import User, Group, Permission
-from m_generales.models import *
-from m_usuarios.forms import *
-import os 
-from django.conf import settings
 from django.db.models import Count, Sum 
 from django.contrib import messages
-from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.forms import PasswordChangeForm
-from django.shortcuts import render_to_response
-from django.template import RequestContext
-from django.db import connection
-import ldap
-from tickets.settings import EN_SERVIDOR
-from django.contrib.humanize.templatetags.humanize import *
-from tickets.tokens import account_activation_token, account_reset_token
-from tickets.send_email import email_activacion, email_contacto, email_resetPwd
-from django.template.loader import render_to_string
-from django.contrib.sites.shortcuts import get_current_site
-from django.utils.encoding import force_bytes, force_text
-from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+
+from config.settings import EN_SERVIDOR
+from m_generales.models import *
+from m_usuarios.forms import *
 
 @login_required()
 @permission_required('usuarios.listar_usuarios')
@@ -40,106 +32,54 @@ def listado_usuarios(request):
 	return render(request, 'listado_usuarios.html', ctx )
 
 
+
+
 @login_required()
-@permission_required('auth.crear_usuario')
+@permission_required('usuario.puede_crear_usuarios')
 @transaction.atomic
-def crear_usuario(request): 
+def crear_usuario(request):
 	if request.POST:
-		import random
-		import string
-		with transaction.atomic():
-			try:
-				if not User.objects.filter(username=request.POST['email']).exists():
-					us = User()
-					us.username = request.POST['email']
-					us.first_name = request.POST['first_name']
-					us.last_name = request.POST['last_name']
-					us.email = request.POST['email']
-					us.set_password('Temporal123')
-					us.is_active = False
-					us.save()
-					for x in request.POST.getlist('grupos'):
-						g = Group.objects.get(id=x)
-						g.user_set.add(us)
-					toRange = 15
-					x1 = ''.join(random.choice(string.ascii_uppercase + string.digits)for _ in range(toRange))
-					x2 = ''.join(random.choice(string.ascii_uppercase + string.digits)for _ in range(toRange))
-					codigo_con = str(x1)+''+str(us.pk)+''+str(x2)
-
-					current_site = get_current_site(request)
-					subject = 'BI NETWORK OPERATION CENTER: Mensaje de bienvenida'
-					message = render_to_string('correos/mensaje_bienvenida.html', {
-						'user': us,
-						'domain': current_site.domain,
-						'uid': codigo_con,
-						'token': account_reset_token.make_token(us),
-					})
-					email_resetPwd(us.email, subject, message)
-					messages.success(request, 'Usuario creardo con éxito')
-				else:
-					messages.error(request, 'Usuario ya existe')
-			except Exception as e:
-				print (e)
-				messages.error(request, 'Ocurrió un problema al crear usuario')
-		return redirect('listado_usuarios')
-	
-	grupos = Group.objects.all()
-	ctx ={
-		'grupos':grupos,
-	}
-	return render(request, 'crear_usuario.html', ctx )
-
-def activate(request, uidb64, token):
-	if request.POST:
-		try:
-			uid = uidb64[15:][:-15]
-			user = User.objects.get(pk=uid)
-			form = AdminPasswordChangeForm(user, request.POST)
-		except (TypeError, ValueError, OverflowError, User.DoesNotExist) as e:
-			messages.error(request, 'No se pudo realizar activación de cuenta')
-			return redirect('login')
-			
+		form = SignUpForm(request.POST)
 		if form.is_valid():
-			form.save()
-			user.is_active = True
-			user.save()
-			messages.success(request, 'Activación de cuenta realizada con éxito')
-
+			try:
+				user = form.save()
+				user.refresh_from_db()  # load the profile instance created by the signal
+				user.is_active = True
+				#user.email = user.username
+				#user.profile.auth_phone = request.POST['auth_phone']
+				#user.profile.auth_email_confirmed = True
+				#user.profile.auth_revise_sol_ventas = request.POST['auth_revise_sol_ventas']
+				user.save()
+				for x in request.POST.getlist('grupos'):
+					g = Group.objects.get(id=x)
+					g.user_set.add(user)
+				messages.success(request, 'Usuario creado con éxito')
+			except expression as identifier:
+				messages.error(
+					request, 'Ocurrió un problema al crear usuario, por favor revise los datos ingresados')
+				grupos = Group.objects.all()
+				ctx = {
+					'grupos': grupos,
+					'form': form
+				}
+				return render(request, 'usuarios_crear.html', ctx)
 		else:
-			messages.error(request, 'No se pudo realizar activación de cuenta')
+			messages.error(
+				request, 'Ocurrió un problema al crear usuario, por favor revise los datos ingresados')
+			grupos = Group.objects.all()
 			ctx = {
 				'form': form,
-				'user': user,
+				'grupos': grupos
 			}
-			return render(request, 'activate.html', ctx)
-
-		#return redirect(reverse('usuarios_detalle', kwargs={'id': id}))
-		return redirect('login')
-
-	else:
-		try:
-			uid = uidb64[15:][:-15]
-			user = User.objects.get(pk=uid)
-		except (TypeError, ValueError, OverflowError, User.DoesNotExist) as e:
-			user = None
-		if user is not None and user.is_active == True:
-			messages.info(request, 'Cuenta ya ha sido activada anteriormente')
-			return redirect('login')
-
-		if user is not None and account_activation_token.check_token(user, token):
-			try:
-				user = User.objects.get(pk=uid)
-				form = AdminPasswordChangeForm(user)
-			except Exception as e:
-				messages.error(request, 'Ocurrió un problema al obtener usuario')
-				return redirect('login')
-			ctx = {
-				'form': form, 'user': user,
-			}
-			return render(request, 'activate.html', ctx)
-		else:
-			return redirect('login')
-
+			return render(request, 'usuarios_crear.html', ctx)
+		return redirect('usuarios_listado')
+	form = SignUpForm()
+	grupos = Group.objects.all()
+	ctx = {
+		'grupos': grupos,
+		'form': form
+	}
+	return render(request, 'crear_usuario.html', ctx)
 
 @login_required()
 @permission_required('auth.editar_usuario')
@@ -151,7 +91,6 @@ def editar_usuario(request, codigo):
 				us = User.objects.get(pk = request.POST['user_id'])
 				us.first_name = request.POST['first_name']
 				us.last_name = request.POST['last_name']
-				#us.set_password('Temporal123')
 				us.is_active = request.POST['is_active']
 				us.save()
 				us.groups.clear()
@@ -177,7 +116,7 @@ def editar_usuario(request, codigo):
 		}
 		return render(request, 'editar_usuario.html', ctx )
 
-
+ 
 @login_required()
 @transaction.atomic
 def change_password(request):
